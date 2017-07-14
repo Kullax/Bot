@@ -103,8 +103,8 @@ def checkOnline():
 
     os.system('cls' if os.name == 'nt' else 'clear')
 
-    with open("logs/" + str(time.time()), 'w') as outfile:
-        json.dump(adult_content, outfile)
+    # with open("logs/" + str(time.time()), 'w') as outfile:
+    #     json.dump(adult_content, outfile)
 
     online = []
     for streamer in adult_content:

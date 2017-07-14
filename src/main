@@ -148,7 +148,12 @@ print r.content
 #
 
 def DO_IT_UBF():
-    online = checkOnline()
+
+    try:
+        online = checkOnline()
+    except:
+        online = []
+
     drawProfile(online)
 
 def Clean(*args):

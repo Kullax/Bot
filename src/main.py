@@ -18,16 +18,16 @@ font_size = 16
 screen_width = 1920
 
 
-font = ImageFont.truetype("Neo Sans.TTF", font_size)
+#font = ImageFont.truetype("Neo Sans.TTF", font_size)
 
 text = Image.new('RGBA', (0, 0), (0, 0, 0, 0))
 draw = ImageDraw.Draw(text)
 text_0 = "I'm all alone"
-w_0, _ = draw.textsize(text_0, font)
+w_0, _ = draw.textsize(text_0)#, font)
 text_1 = "  Watch this one instead!  "
-w_1, _ = draw.textsize(text_1, font)
+w_1, _ = draw.textsize(text_1)#, font)
 text_2 = "  Watch these instead!  "
-w_2, _ = draw.textsize(text_2, font)
+w_2, _ = draw.textsize(text_2)#, font)
 
 text_size = max(max(w_0,w_1),w_2)
 
@@ -43,7 +43,7 @@ def drawProfile(input=["kullax"]):
     width, height = (max( (MAX_WIDTH*len(input) + 2*BORDER_SIZE), text_size), MAX_HEIGHT + 2*BORDER_SIZE + font_size)
 
     if len(input) == 0:
-        screen.save("output.png")
+        screen.save("/var/www/html/dump/output.png")
         return
 #        text = text_0
     elif len(input) == 1:
@@ -59,8 +59,8 @@ def drawProfile(input=["kullax"]):
     draw = ImageDraw.Draw(background_outer)
 
 
-    w,h = draw.textsize(text, font)
-    draw.text((int((width-w)/2),0), text, (255,255,255), font)
+    w,h = draw.textsize(text)#, font)
+    draw.text((int((width-w)/2),0), text, (255,255,255))#, font)
 
     background_inner = Image.new('RGBA', (MAX_WIDTH*len(input), MAX_HEIGHT), (0, 0, 0, 255))
     background_outer.paste(background_inner, (BORDER_SIZE, BORDER_SIZE + font_size))
@@ -90,7 +90,7 @@ def drawProfile(input=["kullax"]):
         count += 1
 
 
-    background_outer.save("output.png")
+    background_outer.save("/var/www/html/dump/output.png")
 
 def checkOnline():
 
@@ -103,8 +103,8 @@ def checkOnline():
 
     os.system('cls' if os.name == 'nt' else 'clear')
 
-    # with open("logs/" + str(time.time()), 'w') as outfile:
-    #     json.dump(adult_content, outfile)
+    with open("logs/" + str(time.time()), 'w') as outfile:
+        json.dump(adult_content, outfile)
 
     online = []
     for streamer in adult_content:

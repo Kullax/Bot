@@ -1,0 +1,18 @@
+SELECT streamers.name, count(streamer) s, @curRank := @curRank + 1 as rank
+FROM (SELECT @curRank := 0) r, `event`
+inner join streamers
+on event.streamer = streamers.id
+group by streamer
+order by s desc
+limit 100
+
+
+SELECT @curRank := @curRank + 1 as rank, name from
+(SELECT @curRank := 0) r,
+(SELECT streamers.name name, count(streamer) s
+FROM `event`
+inner join streamers
+on event.streamer = streamers.id
+group by streamer
+order by s desc
+limit 100) as T

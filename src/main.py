@@ -14,11 +14,13 @@ MAX_WIDTH = 60
 MAX_HEIGHT = 50
 BORDER_SIZE = 5
 font_size = 16
+streamer_font_size = 16
 
 screen_width = 1920
 
 
 font = ImageFont.truetype("Neo Sans.TTF", font_size)
+streamer_font = ImageFont.truetype("impact.ttf", streamer_font_size)
 
 text = Image.new('RGBA', (0, 0), (0, 0, 0, 0))
 draw = ImageDraw.Draw(text)
@@ -32,10 +34,16 @@ w_2, _ = draw.textsize(text_2, font)
 text_size = max(max(w_0,w_1),w_2)
 
 follows = []
-with open('follows.csv', 'rb') as csvfile:
-    reader = csv.reader(csvfile)
-    for row in reader:
-        follows.append(row[0])
+filename = 'follows.csv'
+
+def loadFollows():
+    global follows
+    with open(filename, 'rb') as csvfile:
+        reader = csv.reader(csvfile)
+        for row in reader:
+            follows.append(row[0])
+
+stamp = os.stat(filename).st_mtime
 
 def drawProfile(input=["kullax"]):
     screen = Image.new('RGBA', (screen_width, MAX_HEIGHT + 2 * BORDER_SIZE + font_size), (0, 0, 0, 0))
@@ -45,7 +53,6 @@ def drawProfile(input=["kullax"]):
     if len(input) == 0:
         screen.save("output.png")
         return
-#        text = text_0
     elif len(input) == 1:
         text = text_1
     else:
@@ -87,30 +94,52 @@ def drawProfile(input=["kullax"]):
 
         offset = (BORDER_SIZE + count * MAX_WIDTH + int((MAX_WIDTH-img_width) / 2), int((bg_height + font_size - img_height) / 2))
         background_outer.paste(img, offset)
+
+        x = offset[0]
+        y = img_height
+        draw.text((x - 1 , y), streamer[0:6], font=streamer_font, fill="white")
+        draw.text((x + 1 , y), streamer[0:6], font=streamer_font, fill="white")
+        draw.text((x , y - 1), streamer[0:6], font=streamer_font, fill="white")
+        draw.text((x , y + 1), streamer[0:6], font=streamer_font, fill="white")
+
+        draw.text((offset[0] ,img_height), streamer[0:6], (0,0,0), streamer_font)
         count += 1
 
 
     background_outer.save("output.png")
 
 def checkOnline():
+    global stamp
+    if os.stat(filename).st_mtime != stamp:
+        print "file changed", stamp, os.stat(filename).st_mtime
+        loadFollows()
+        stamp = os.stat(filename).st_mtime
+
 
     headers = {'Accept' : 'application/json'}
     url = 'https://api.picarto.tv/v1/online?adult=true&gaming=true&categories='
     r_adult = requests.get(url, headers=headers)
 
-    adult_content =  json.loads(r_adult.content)
+    adult_content = json.loads(r_adult.content)
 
 
     os.system('cls' if os.name == 'nt' else 'clear')
 
-    # with open("logs/" + str(time.time()), 'w') as outfile:
-    #     json.dump(adult_content, outfile)
-
     online = []
+    viewers = 0
+    top_stream = 0;
+    top_stream_name = "";
     for streamer in adult_content:
+        viewer = int(streamer["viewers"])
+        viewers += viewer
+        if(viewer >= top_stream):
+            top_stream = viewer
+            top_stream_name = streamer["name"]
         if streamer["name"] in follows:
             print streamer["name"], "is online!"
             online.append(streamer["name"])
+    print len(adult_content), viewers
+    print top_stream_name, top_stream
     return online
 
 """
@@ -166,7 +195,7 @@ def Clean(*args):
 if __name__ == "__main__":
     for sig in (signal.SIGABRT, signal.SIGINT, signal.SIGTERM):
         signal.signal(sig, Clean)
-
+    loadFollows()
     while True:
         DO_IT_UBF()
         # most endpoints have 30 second cache.

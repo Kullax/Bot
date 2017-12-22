@@ -1,0 +1,280 @@
+diff --git a/src/Graph.py b/src/Graph.py
+index 6ad803d..0f677a7 100644
+--- a/src/Graph.py
++++ b/src/Graph.py
+@@ -1,3 +1,6 @@
++import matplotlib
++matplotlib.use('Agg')
++
+ from collections import OrderedDict
+ from pylab import *
+ import glob
+@@ -6,16 +9,25 @@ import csv
+ import time
+ import os
+ import copy
+-matplotlib.style.use("ggplot")
++
++# CSV_LOCATION = '/home/kullax/picartobot/Bot/src/follows.csv'
++# ACTIVITY_LOCATION = '/var/www/html/dump/stats/activity.png'
++# STATS_LOCATION = '/var/www/html/dump/stats/'
++# LOG_DIRECTORY = '/home/kullax/picartobot/Bot/src/logs/'
++CSV_LOCATION = 'follows.csv'
++ACTIVITY_LOCATION = 'C:\\Users\\Martin\\PycharmProjects\\Bot\\src\\stats\\activity.png'
++STATS_LOCATION = 'C:\\Users\\Martin\\PycharmProjects\\Bot\\src\\stats\\'
++LOG_DIRECTORY = 'logs/'
++
++
+ 
+ follows = []
+-with open('follows.csv', 'rb') as csvfile:
++with open(CSV_LOCATION, 'rb') as csvfile:
+     reader = csv.reader(csvfile)
+     for row in reader:
+         follows.append(row[0])
+ times = {}
+-os.chdir("logs/")
+-old_files = []
++os.chdir(LOG_DIRECTORY)
+ 
+ streamer_data = OrderedDict()
+ streamer_checked = {}
+@@ -23,47 +35,66 @@ streamer_checked = {}
+ my_cmap = copy.copy(plt.cm.get_cmap('Greens'))
+ my_cmap.set_bad(alpha=0)
+ 
++
+ """
+ loop after this
+ """
+-def DOIT():
++def DOIT(start, end):
+     for streamer in follows:
+         streamer_data[streamer] = []
+ 
+-    files = glob.glob("*")
+-    for file in files:
+-        if file in old_files:
++    files_ = glob.glob("*")
++
++    for file in sorted(files_):
++        if float(file) < start or float(file) > end:
+             continue
+         with open(file, 'rb') as content:
+             data = json.load(content)
+-        times[float(file)] = data
+-        old_files.append(file)
+-
+-    for time in sorted(times.items(), key=lambda x: x[0]):
+-        for streamer in follows:
+-            streamer_checked[streamer] = False
+-        for streamer in times[time[0]]:
+-            if streamer["name"] in follows:
+-                streamer_checked[streamer["name"]] = True
+-                streamer_data[streamer["name"]].append(int(streamer["viewers"]))
+-        for streamer in follows:
+-            if streamer_checked[streamer] is False:
+-                streamer_data[streamer].append(np.nan)
+-
++            for streamer in follows:
++                streamer_checked[streamer] = False
++            for streamer in data:
++                if streamer["name"] in follows:
++                    streamer_checked[streamer["name"]] = True
++                    streamer_data[streamer["name"]].append(int(streamer["viewers"]))
++            for streamer in follows:
++                if streamer_checked[streamer] is False:
++                    streamer_data[streamer].append(np.ma.masked)
+     dictlist = []
+     streamers = []
+     for key, value in streamer_data.iteritems():
+         temp = value
+         dictlist.append(temp)
++        # if key < 0:
++        #     streamer.append(np.ma.masked)
++        # else:
+         streamers.append(key)
+-    length = len(dictlist[0])
+-    fig, ax = plt.subplots(80, len(dictlist))
+ 
++    index = 0
++    for streamer in dictlist:
++        data = np.array([streamer])
++        # data = np.ma.masked_where(data < 0, data)
++        # print data
++        fig, ax = plt.subplots()
++        ax.axis('off')
++        ax.imshow(data, cmap=my_cmap, interpolation='none', extent=[0, 100, 0, 1])
++        plt.savefig(STATS_LOCATION + streamers[index] + '.png', transparent=True, bbox_inches='tight')
++        index+=1
++        fig.clf()
++
++
++    fig, ax = plt.subplots()
+     ax.axis('off')
+-    ax.imshow(array(dictlist), cmap=my_cmap, interpolation='none', extent=[length-80, length, 0, len(dictlist)])
+-    plt.savefig('../activity.png', transparent=True)
++    ax.imshow(array(dictlist), cmap=my_cmap, interpolation='none', extent=[0, 100, 0, len(dictlist)])
++    plt.savefig(ACTIVITY_LOCATION, transparent=True, bbox_inches='tight')
++    fig.clf()
++
++
++
+ 
+ if __name__ == "__main__":
+-    while True:
+-        DOIT()
+-        time.sleep(30)
++    import warnings
++    warnings.filterwarnings("ignore")
++
++    now = time.time()
++    interval = 2 * 24 * 60 * 60
++    DOIT(start = now - interval, end = now)
+diff --git a/src/follows.csv b/src/follows.csv
+index 1287b02..e8dabdb 100644
+--- a/src/follows.csv
++++ b/src/follows.csv
+@@ -2,18 +2,22 @@ Watsup
+ Twokinds
+ TheDomovoi
+ tgwonder
+-seff
+-SageSage
++Seff
++SageSaga
+ LittleNapoleon
+ KabsCorner
+ HeresyArtStream
+ GeneralIrrelevant
+ foxboy83
+ FluffKevlar
+-Digifang
+ CoraBlue
+ CheasyDino
+-Antiroo
++#Antiroo
+ UltraBondageFairy
+ Nekonny
+-LordMagicPants
+\ No newline at end of file
++LordMagicPants
++dirtyscoundrel
++ValSalia
++Fortes
++chesshire
++JazzyZ401
+\ No newline at end of file
+diff --git a/src/main.py b/src/main.py
+index d332e96..1952b03 100644
+--- a/src/main.py
++++ b/src/main.py
+@@ -14,11 +14,13 @@ MAX_WIDTH = 60
+ MAX_HEIGHT = 50
+ BORDER_SIZE = 5
+ font_size = 16
++streamer_font_size = 16
+ 
+ screen_width = 1920
+ 
+ 
+ font = ImageFont.truetype("Neo Sans.TTF", font_size)
++streamer_font = ImageFont.truetype("impact.ttf", streamer_font_size)
+ 
+ text = Image.new('RGBA', (0, 0), (0, 0, 0, 0))
+ draw = ImageDraw.Draw(text)
+@@ -32,10 +34,16 @@ w_2, _ = draw.textsize(text_2, font)
+ text_size = max(max(w_0,w_1),w_2)
+ 
+ follows = []
+-with open('follows.csv', 'rb') as csvfile:
+-    reader = csv.reader(csvfile)
+-    for row in reader:
+-        follows.append(row[0])
++filename = 'follows.csv'
++
++def loadFollows():
++    global follows
++    with open(filename, 'rb') as csvfile:
++        reader = csv.reader(csvfile)
++        for row in reader:
++            follows.append(row[0])
++
++stamp = os.stat(filename).st_mtime
+ 
+ def drawProfile(input=["kullax"]):
+     screen = Image.new('RGBA', (screen_width, MAX_HEIGHT + 2 * BORDER_SIZE + font_size), (0, 0, 0, 0))
+@@ -45,7 +53,6 @@ def drawProfile(input=["kullax"]):
+     if len(input) == 0:
+         screen.save("output.png")
+         return
+-#        text = text_0
+     elif len(input) == 1:
+         text = text_1
+     else:
+@@ -87,30 +94,52 @@ def drawProfile(input=["kullax"]):
+ 
+         offset = (BORDER_SIZE + count * MAX_WIDTH + int((MAX_WIDTH-img_width) / 2), int((bg_height + font_size - img_height) / 2))
+         background_outer.paste(img, offset)
++
++        x = offset[0]
++        y = img_height
++        draw.text((x - 1 , y), streamer[0:6], font=streamer_font, fill="white")
++        draw.text((x + 1 , y), streamer[0:6], font=streamer_font, fill="white")
++        draw.text((x , y - 1), streamer[0:6], font=streamer_font, fill="white")
++        draw.text((x , y + 1), streamer[0:6], font=streamer_font, fill="white")
++
++        draw.text((offset[0] ,img_height), streamer[0:6], (0,0,0), streamer_font)
+         count += 1
+ 
+ 
+     background_outer.save("output.png")
+ 
+ def checkOnline():
++    global stamp
++    if os.stat(filename).st_mtime != stamp:
++        print "file changed", stamp, os.stat(filename).st_mtime
++        loadFollows()
++        stamp = os.stat(filename).st_mtime
++
+ 
+     headers = {'Accept' : 'application/json'}
+     url = 'https://api.picarto.tv/v1/online?adult=true&gaming=true&categories='
+     r_adult = requests.get(url, headers=headers)
+ 
+-    adult_content =  json.loads(r_adult.content)
++    adult_content = json.loads(r_adult.content)
+ 
+ 
+     os.system('cls' if os.name == 'nt' else 'clear')
+ 
+-    # with open("logs/" + str(time.time()), 'w') as outfile:
+-    #     json.dump(adult_content, outfile)
+-
+     online = []
++    viewers = 0
++    top_stream = 0;
++    top_stream_name = "";
+     for streamer in adult_content:
++        viewer = int(streamer["viewers"])
++        viewers += viewer
++        if(viewer >= top_stream):
++            top_stream = viewer
++            top_stream_name = streamer["name"]
+         if streamer["name"] in follows:
+             print streamer["name"], "is online!"
+             online.append(streamer["name"])
++    print len(adult_content), viewers
++    print top_stream_name, top_stream
+     return online
+ 
+ """
+@@ -166,7 +195,7 @@ def Clean(*args):
+ if __name__ == "__main__":
+     for sig in (signal.SIGABRT, signal.SIGINT, signal.SIGTERM):
+         signal.signal(sig, Clean)
+-
++    loadFollows()
+     while True:
+         DO_IT_UBF()
+         # most endpoints have 30 second cache.

@@ -19,7 +19,7 @@ def checkOnline():
     with open(file, 'w') as outfile:
         json.dump(adult_content, outfile)
     print "analysing"
-    customsql.analysefiles(file)
+    customsql.analysefile(file)
     print "done analysing"
 
 def DO_IT_UBF():

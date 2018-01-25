@@ -72,7 +72,7 @@ def AddTick(db, epoch):
 def AddStreamer(db, streamer):
     _id = int(streamer["user_id"])
     name = str(streamer["name"])
-    is_there = db.query(Streamer).filter(Streamer.name == name).first()
+    is_there = db.query(Streamer).filter(Streamer.name == name)
     if is_there:
         return
 

@@ -12,6 +12,7 @@ def analysefile(input):
     with io.open(input, "r", encoding="utf-8") as content:
         data = json.load(content)
         for streamer in data:
+            db.flush()
             models.AddStreamer(db, streamer)
             models.AddEvent(db, streamer, tick)
         db.commit()

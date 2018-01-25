@@ -22,7 +22,8 @@ def analysefiles(input):
                 models.AddStreamer(db, streamer)
                 models.AddEvent(db, streamer, tick)
         db.commit()
-        shutil.move(f, "C:/Users/Martin/Desktop/loggedcopy/" + str(date))
+        print "committing"
+#        shutil.move(f, "C:/Users/Martin/Desktop/loggedcopy/" + str(date))
     Session.remove()
 
 

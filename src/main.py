@@ -18,7 +18,9 @@ def checkOnline():
     file = "/mnt/volume-nyc3-01/logs/" + str(time.time())
     with open(file, 'w') as outfile:
         json.dump(adult_content, outfile)
-    main.analysefiles([file])
+    print "analysing"
+    customsql.analysefiles([file])
+    print "done analysing"
 
 def DO_IT_UBF():
 

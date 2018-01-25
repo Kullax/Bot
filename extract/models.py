@@ -104,9 +104,9 @@ def AddEvent(db, streamer, tick):
     event.tick = tick
     event.streamer = user_id
 
-    cat = db.query(Category).filter(Category.category == category).first().id
+    cat = db.query(Category).filter(Category.category == category).first()
     if cat:
-        event.category = cat
+        event.category = cat.id
     else:
         newCat = Category()
         newCat.category = category

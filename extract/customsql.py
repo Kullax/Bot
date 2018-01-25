@@ -15,8 +15,9 @@ def analysefiles(input):
     db = Session()
     print "made connection"
     for f in input:
-        print f
+        print f,
         date = float(f.split("/")[-1])
+        print "date_ ", date,
         tick = models.AddTick(db, date)
         with io.open(f, "r", encoding="utf-8") as content:
             data = json.load(content)

@@ -46,12 +46,12 @@ class Event(Base):
     viewers = Column(Integer)
 
 
-db = scoped_session(session_factory)
-categories = db.query(Category).filter().all()
-cats = {}
-for category in categories:
-    cats[category.category] = category.id
-db.remove()
+# db = scoped_session(session_factory)
+# categories = db.query(Category).filter().all()
+# cats = {}
+# for category in categories:
+#     cats[category.category] = category.id
+# db.remove()
 
 
 def GetCategories():
@@ -76,7 +76,6 @@ def AddTick(db, epoch):
     print "committed tick"
     # Retrieve Key, as it's unknown at this point
     tick = db.query(Tick).filter(Tick.epoch == epoch).first()
-    print tick.id
     return tick.id
 
 
@@ -114,7 +113,19 @@ def AddEvent(db, streamer, tick):
     event = Event()
     event.tick = tick
     event.streamer = user_id
-    event.cat = cats[category]
+
+    cat = db.query(Category.id).filter(category.category == category).first()
+    if cat:
+        event.cat = cat
+    else:
+        newCat = Category()
+        newCat.category = category
+        db.add(newCat)
+        db.commit()
+        event.cat = db.query(Category.id).filter(category.category == category).first()
+
+
+    # event.cat = cats[category]
     event.gaming = gaming
     event.multistream = multistream
     event.adult = adult

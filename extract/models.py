@@ -2,7 +2,6 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import *
 import os
 from sqlalchemy.orm import sessionmaker, scoped_session
-import datetime
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -40,19 +39,10 @@ class Event(Base):
     streamer = Column(Integer, ForeignKey(Streamer.id))
     category = Column(Integer, ForeignKey(Category.id))
     adult = Column(Boolean)
-    commission = Column(Boolean)
+    commissions = Column(Boolean)
     gaming = Column(Boolean)
     multistream = Column(Boolean)
     viewers = Column(Integer)
-
-
-# db = scoped_session(session_factory)
-# categories = db.query(Category).filter().all()
-# cats = {}
-# for category in categories:
-#     cats[category.category] = category.id
-# db.remove()
-
 
 def GetCategories():
     db = scoped_session(session_factory)
@@ -105,6 +95,7 @@ def AddEvent(db, streamer, tick):
     multistream = bool(streamer["multistream"])
     adult = bool(streamer["adult"])
     viewers = int(streamer["viewers"])
+    commissions = bool(streamer["commissions"])
 
     (ret, ), = db.query(exists().where(and_(Event.tick == tick, Event.streamer == user_id) ))
     if ret:
@@ -123,36 +114,14 @@ def AddEvent(db, streamer, tick):
         db.add(newCat)
         db.commit()
         event.cat = db.query(Category.id).filter(Category.category == category).first()
-
-
-    # event.cat = cats[category]
     event.gaming = gaming
     event.multistream = multistream
     event.adult = adult
     event.viewers = viewers
+    event.commissions = commissions
 
     db.add(event)
     return 1
-
-
-# def UpdateCategory(db):
-#     categories = db.query(Category).filter().all()
-#     cats = {}
-#     for category in categories:
-#         cats[category.category] = category.id
-#     print cats
-#
-#     added = 0
-#     while true:
-#         try:
-#             added += 1
-#             em = db.query(Event).filter().get(added)
-#             em.cat = cats[em.category]
-#             if (added % 1000) == 0:
-#                 print added
-#                 db.commit()
-#         except:
-#             db.commit()
 
 def FindAllFromStreamer(db, name, delay=5):
     everything = db.query(Event.id, Streamer.name, Tick.epoch, Event.viewers).\

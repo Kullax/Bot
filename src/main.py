@@ -23,11 +23,7 @@ def checkOnline():
     print "done analysing"
 
 def DO_IT_UBF():
-
-    try:
-        online = checkOnline()
-    except:
-        online = []
+   online = checkOnline()
 
 if __name__ == "__main__":
     while True:

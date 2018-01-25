@@ -2,6 +2,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import *
 import os
 from sqlalchemy.orm import sessionmaker, scoped_session
+from sqlalchemy import exists
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -72,9 +73,9 @@ def AddStreamer(db, streamer):
     print streamer
     id = int(streamer["user_id"])
     name = str(streamer["name"])
-    # (ret,), = db.query(exists().where(Streamer.id == id ))
-    # if ret:
-    #     return
+    (ret,), = db.query(exists().where(Streamer.id == id ))
+    if ret:
+        return
 
     streamer = Streamer()
     streamer.id = id

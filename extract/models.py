@@ -166,6 +166,8 @@ def FindAllFromStreamer(db, name, delay=5):
             streams[first] = abs(first - last).total_seconds()
             first = tick
         last = tick
+    if first == None or last == None:
+        return {}
     streams[first] = abs(first - last).total_seconds()
     # print views
     return streams

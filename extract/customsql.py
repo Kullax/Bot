@@ -10,23 +10,21 @@ import models
 from sqlalchemy.orm import scoped_session
 
 
-def analysefiles(input):
+def analysefile(input):
     Session = scoped_session(models.session_factory)
     db = Session()
-    print "made connection"
-    for f in input:
-        print f,
-        date = float(f.split("/")[-1])
-        print "date_ ", date,
-        tick = models.AddTick(db, date)
-        with io.open(f, "r", encoding="utf-8") as content:
-            data = json.load(content)
-            for streamer in data:
-                models.AddStreamer(db, streamer)
-                models.AddEvent(db, streamer, tick)
-        db.commit()
-        print "committing"
-#        shutil.move(f, "C:/Users/Martin/Desktop/loggedcopy/" + str(date))
+    date = float(file.split("/")[-1])
+    print "date_ ", date,
+
+    tick = models.AddTick(db, date)
+#         with io.open(f, "r", encoding="utf-8") as content:
+#             data = json.load(content)
+#             for streamer in data:
+#                 models.AddStreamer(db, streamer)
+#                 models.AddEvent(db, streamer, tick)
+#         db.commit()
+#         print "committing"
+# #        shutil.move(f, "C:/Users/Martin/Desktop/loggedcopy/" + str(date))
     Session.remove()
 
 

@@ -68,6 +68,8 @@ def GetCategories():
 
 
 def AddTick(db, epoch):
+    db = scoped_session(session_factory)
+
     # date = datetime.datetime.fromtimestamp(epoch).replace(microsecond=0)
     print "looking for tick",
     tick = db.query(Tick).filter(Tick.epoch == epoch).first()

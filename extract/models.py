@@ -45,18 +45,6 @@ class Event(Base):
     multistream = Column(Boolean)
     viewers = Column(Integer)
 
-# def GetCategories():
-#     db = scoped_session(session_factory)
-#     categories = db.query(Event.category).distinct().all()
-#     for category in categories:
-#         print category
-#         cat = Category()
-#         cat.category = str(category[0])
-#         db.add(cat)
-#         db.commit()
-#     print categories
-#     db.remove()
-
 def AddTick(db, epoch):
     tick = Tick()
     tick.epoch = float(epoch)
@@ -73,9 +61,8 @@ def AddStreamer(db, streamer):
     _id = int(streamer["user_id"])
     name = str(streamer["name"])
 
-    print _id
-    streamer = db.query(Streamer).filter(Streamer.id == _id).first()
-    if streamer:
+    (ret,), = db.query(exists().where(Streamer.id == _id))
+    if ret:
         return
 
     streamer = Streamer()
@@ -98,7 +85,7 @@ def AddEvent(db, streamer, tick):
 
     (ret, ), = db.query(exists().where(and_(Event.tick == tick, Event.streamer == user_id) ))
     if ret:
-        return 0
+        return
 
     event = Event()
     event.tick = tick
@@ -122,7 +109,6 @@ def AddEvent(db, streamer, tick):
 
     db.add(event)
     db.commit()
-    print "added event"
     return 1
 
 def FindAllFromStreamer(db, name, delay=5):
@@ -150,6 +136,5 @@ def FindAllFromStreamer(db, name, delay=5):
     if first == None or last == None:
         return 0
     streams[first] = abs(first - last).total_seconds()
-    # print views
     return streams
 

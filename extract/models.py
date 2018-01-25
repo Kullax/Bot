@@ -72,7 +72,7 @@ def AddTick(db, epoch):
 
     # date = datetime.datetime.fromtimestamp(epoch).replace(microsecond=0)
     print "looking for tick",
-    tick = db.query(Tick).filter(Tick.epoch == epoch).first()
+    tick = db.query(Tick).filter(Tick.epoch < epoch).first()
     print tick
     if not tick:
         print "creating tick"

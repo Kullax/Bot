@@ -1,13 +1,11 @@
 from __future__ import division
-
-import os.path
+import sys
 import simplejson as json
 import requests
-import numpy as np
-import csv
 import time
-import os
-import signal
+
+sys.path.append('../extract')
+import customsql
 
 def checkOnline():
 
@@ -17,8 +15,10 @@ def checkOnline():
 
     adult_content =  json.loads(r_adult.content)
 
-    with open("/mnt/volume-nyc3-01/logs/" + str(time.time()), 'w') as outfile:
+    file = "/mnt/volume-nyc3-01/logs/" + str(time.time())
+    with open(file, 'w') as outfile:
         json.dump(adult_content, outfile)
+    main.analysefiles([file])
 
 def DO_IT_UBF():
 
@@ -28,7 +28,6 @@ def DO_IT_UBF():
         online = []
 
 if __name__ == "__main__":
-
     while True:
         DO_IT_UBF()
         time.sleep(30)

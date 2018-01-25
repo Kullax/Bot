@@ -75,6 +75,8 @@ def AddStreamer(db, streamer):
     name = str(streamer["name"])
     try:
         is_there = db.query(Streamer).filter(Streamer.id == id).first()
+        if is_there:
+            return
     except AttributeError:
         return
     # (ret,), = db.query(exists().where(Streamer.id == id ))

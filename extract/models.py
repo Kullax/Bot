@@ -70,25 +70,16 @@ def AddTick(db, epoch):
 
 
 def AddStreamer(db, streamer):
-    print streamer
     id = int(streamer["user_id"])
     name = str(streamer["name"])
-    try:
-        is_there = db.query(Streamer).filter(Streamer.id == id).first()
-        if is_there:
-            return
-    except AttributeError:
-        db.rollback()
+    is_there = db.query(Streamer).filter(Streamer.id == id).first()
+    if is_there:
         return
-    # (ret,), = db.query(exists().where(Streamer.id == id ))
-    # if ret:
-    #     return
 
     streamer = Streamer()
     streamer.id = id
     streamer.name = name
     db.add(streamer)
-    print "adding streamer"
     # Foreign Key needed then adding events - so commit early
     db.commit()
     return

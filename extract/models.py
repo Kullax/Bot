@@ -6,7 +6,7 @@ import datetime
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-mysqlstr = 'mysql+pymysql://root:KCzaEE4s76mzorEA@localhost/picarto?charset=utf8'
+mysqlstr = 'mysql+pymysql://root:Maggie4Now#@localhost/picarto?charset=utf8'
 
 engine = create_engine(mysqlstr, echo=False)
 
@@ -22,9 +22,9 @@ class Streamer(Base):
 
 
 class Tick(Base):
-    __tablename__ = "tick"
+    __tablename__ = "ticks"
     id = Column(Integer, primary_key=True)
-    time = Column(DateTime)
+    epoch = Column(DECIMAL(10,2))
 
 
 class Category(Base):
@@ -34,14 +34,15 @@ class Category(Base):
 
 
 class Event(Base):
-    __tablename__ = "event"
+    __tablename__ = "events"
     id = Column(Integer, primary_key=True)
     tick = Column(Integer, ForeignKey(Tick.id))
     streamer = Column(Integer, ForeignKey(Streamer.id))
-    cat = Column(Integer, ForeignKey(Category.id))
+    category = Column(Integer, ForeignKey(Category.id))
+    adult = Column(Boolean)
+    commission = Column(Boolean)
     gaming = Column(Boolean)
     multistream = Column(Boolean)
-    adult = Column(Boolean)
     viewers = Column(Integer)
 
 
@@ -124,24 +125,24 @@ def AddEvent(db, streamer, tick):
     return 1
 
 
-def UpdateCategory(db):
-    categories = db.query(Category).filter().all()
-    cats = {}
-    for category in categories:
-        cats[category.category] = category.id
-    print cats
-
-    added = 0
-    while true:
-        try:
-            added += 1
-            em = db.query(Event).filter().get(added)
-            em.cat = cats[em.category]
-            if (added % 1000) == 0:
-                print added
-                db.commit()
-        except:
-            db.commit()
+# def UpdateCategory(db):
+#     categories = db.query(Category).filter().all()
+#     cats = {}
+#     for category in categories:
+#         cats[category.category] = category.id
+#     print cats
+#
+#     added = 0
+#     while true:
+#         try:
+#             added += 1
+#             em = db.query(Event).filter().get(added)
+#             em.cat = cats[em.category]
+#             if (added % 1000) == 0:
+#                 print added
+#                 db.commit()
+#         except:
+#             db.commit()
 
 def FindAllFromStreamer(db, name, delay=5):
     everything = db.query(Event.id, Streamer.name, Tick.time, Event.viewers).\

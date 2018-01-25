@@ -47,9 +47,9 @@ def analyse():
 if __name__ == '__main__':
 
     # analyse()
-    is_dst = time.daylight and time.localtime().tm_isdst > 0
-    utc_offset = - (time.altzone if is_dst else time.timezone)
-    print "Dates in", time.strftime("%z", time.gmtime()), ": GMT",utc_offset/3600
+    # is_dst = time.daylight and time.localtime().tm_isdst > 0
+    # utc_offset = - (time.altzone if is_dst else time.timezone)
+    # print "Dates in", time.strftime("%z", time.gmtime()), ": GMT",utc_offset/3600
 
     Session = scoped_session(models.session_factory)
     db = Session()

@@ -69,6 +69,7 @@ def AddTick(db, epoch):
 
 
 def AddStreamer(db, streamer):
+    print streamer
     id = int(streamer["user_id"])
     name = str(streamer["name"])
     streamer = db.query(Streamer).filter(Streamer.id == id).first()

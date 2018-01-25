@@ -24,7 +24,7 @@ class Streamer(Base):
 class Tick(Base):
     __tablename__ = "ticks"
     id = Column(Integer, primary_key=True)
-    epoch = Column(DECIMAL(10,2))
+    epoch = Column(DECIMAL(12,2))
 
 
 class Category(Base):

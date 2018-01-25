@@ -13,7 +13,7 @@ from sqlalchemy.orm import scoped_session
 def analysefile(input):
     Session = scoped_session(models.session_factory)
     db = Session()
-    date = float(file.split("/")[-1])
+    date = float(input.split("/")[-1])
     print "date_ ", date,
 
     tick = models.AddTick(db, date)

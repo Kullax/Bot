@@ -44,18 +44,17 @@ class Event(Base):
     multistream = Column(Boolean)
     viewers = Column(Integer)
 
-def GetCategories():
-    db = scoped_session(session_factory)
-    categories = db.query(Event.category).distinct().all()
-    for category in categories:
-        print category
-        cat = Category()
-        cat.category = str(category[0])
-        db.add(cat)
-        db.commit()
-    print categories
-    db.remove()
-
+# def GetCategories():
+#     db = scoped_session(session_factory)
+#     categories = db.query(Event.category).distinct().all()
+#     for category in categories:
+#         print category
+#         cat = Category()
+#         cat.category = str(category[0])
+#         db.add(cat)
+#         db.commit()
+#     print categories
+#     db.remove()
 
 def AddTick(db, epoch):
     tick = Tick()
@@ -113,7 +112,8 @@ def AddEvent(db, streamer, tick):
         newCat.category = category
         db.add(newCat)
         db.commit()
-        event.cat = db.query(Category.id).filter(Category.category == category).first()
+        event.cat = db.query(Category).filter(Category.category == category).first().id
+
     event.gaming = gaming
     event.multistream = multistream
     event.adult = adult

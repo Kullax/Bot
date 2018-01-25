@@ -54,6 +54,10 @@ if __name__ == '__main__':
     Session = scoped_session(models.session_factory)
     db = Session()
     streams = models.FindAllFromStreamer(db, "Watsup", delay=30)
+    if streams == 0:
+        print "no result"
+        import sys
+        sys.exit()
     s = []
     for stream in sorted(streams):
         if stream.date() > datetime.date(2017, 1, 1):

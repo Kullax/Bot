@@ -13,6 +13,7 @@ from sqlalchemy.orm import scoped_session
 def analysefiles(input):
     Session = scoped_session(models.session_factory)
     db = Session()
+    print "made connection"
     for f in input:
         date = float(f.split("\\")[-1])
         tick = models.AddTick(db, date)

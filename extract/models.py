@@ -69,16 +69,21 @@ def GetCategories():
 
 def AddTick(db, epoch):
     # date = datetime.datetime.fromtimestamp(epoch).replace(microsecond=0)
+    print "looking for tick",
     tick = db.query(Tick).filter(Tick.epoch == epoch).first()
-
+    print tick
     if not tick:
+        print "creating tick"
         tick = Tick()
         tick.epoch = epoch
         db.add(tick)
+        print "added tick"
         # Foreign Key needed then adding events - so commit early
         db.commit()
+        print "committed tick"
         # Retrieve Key, as it's unknown at this point
         tick = db.query(Tick).filter(Tick.epoch == epoch).first()
+    print tick.id
     return tick.id
 
 

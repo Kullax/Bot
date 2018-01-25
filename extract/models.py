@@ -95,6 +95,7 @@ def AddStreamer(db, streamer):
     streamer.id = id
     streamer.name = name
     db.add(streamer)
+    print "adding streamer"
     # Foreign Key needed then adding events - so commit early
     db.commit()
     return

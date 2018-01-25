@@ -106,13 +106,13 @@ def AddEvent(db, streamer, tick):
 
     cat = db.query(Category.id).filter(Category.category == category).first()
     if cat:
-        event.cat = cat
+        event.category = cat
     else:
         newCat = Category()
         newCat.category = category
         db.add(newCat)
         db.commit()
-        event.cat = db.query(Category).filter(Category.category == category).first().id
+        event.category = db.query(Category).filter(Category.category == category).first().id
 
     event.gaming = gaming
     event.multistream = multistream

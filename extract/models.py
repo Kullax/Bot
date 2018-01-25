@@ -121,6 +121,8 @@ def AddEvent(db, streamer, tick):
     event.commissions = commissions
 
     db.add(event)
+    db.commit()
+    print "added event"
     return 1
 
 def FindAllFromStreamer(db, name, delay=5):

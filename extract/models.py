@@ -72,13 +72,11 @@ def AddStreamer(db, streamer):
     print streamer
     id = int(streamer["user_id"])
     name = str(streamer["name"])
-    streamer = db.query(Streamer).filter(Streamer.id == id).first()
+    (ret,), = db.query(exists().where(Streamer-id == id ))
+    if ret:
+        return
 
-    if streamer:
-        if streamer.id == id and streamer.name == name:
-            return
-    else:
-        streamer = Streamer()
+    streamer = Streamer()
     streamer.id = id
     streamer.name = name
     db.add(streamer)

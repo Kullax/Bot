@@ -114,7 +114,7 @@ def AddEvent(db, streamer, tick):
     event.tick = tick
     event.streamer = user_id
 
-    cat = db.query(Category.id).filter(category.category == category).first()
+    cat = db.query(Category.id).filter(Category.category == category).first()
     if cat:
         event.cat = cat
     else:
@@ -122,7 +122,7 @@ def AddEvent(db, streamer, tick):
         newCat.category = category
         db.add(newCat)
         db.commit()
-        event.cat = db.query(Category.id).filter(category.category == category).first()
+        event.cat = db.query(Category.id).filter(Category.category == category).first()
 
 
     # event.cat = cats[category]

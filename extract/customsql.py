@@ -15,16 +15,13 @@ def analysefile(input):
     db = Session()
     date = float(input.split("/")[-1])
     print "date_ ", date,
-
     tick = models.AddTick(db, date)
-#         with io.open(f, "r", encoding="utf-8") as content:
-#             data = json.load(content)
-#             for streamer in data:
-#                 models.AddStreamer(db, streamer)
-#                 models.AddEvent(db, streamer, tick)
-#         db.commit()
-#         print "committing"
-# #        shutil.move(f, "C:/Users/Martin/Desktop/loggedcopy/" + str(date))
+    with io.open(input, "r", encoding="utf-8") as content:
+        data = json.load(content)
+        for streamer in data:
+            models.AddStreamer(db, streamer)
+            models.AddEvent(db, streamer, tick)
+        db.commit()
     Session.remove()
 
 

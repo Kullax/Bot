@@ -13,14 +13,14 @@ def checkOnline():
     url = 'https://api.picarto.tv/v1/online?adult=true&gaming=true&categories='
     r_adult = requests.get(url, headers=headers)
 
-    adult_content =  json.loads(r_adult.content)
-
-    file = "/mnt/volume-nyc3-01/logs/" + str(time.time())
     with open(file, 'w') as outfile:
         try:
-            json.dump(adult_content, outfile)
+            adult_content =  json.loads(r_adult.content)
         except:
             print "error in logging file"
+            return
+    file = "/mnt/volume-nyc3-01/logs/" + str(time.time())
+    json.dump(adult_content, outfile)
     print "analysing"
     customsql.analysefile(file)
     print "done analysing"

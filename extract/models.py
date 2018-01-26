@@ -51,7 +51,6 @@ def AddTick(db, epoch):
     db.add(tick)
     # Foreign Key needed then adding events - so commit early
     db.commit()
-    print "committed tick"
     # Retrieve Key, as it's unknown at this point
     tick = db.query(Tick).filter(Tick.epoch == epoch).first()
     return tick.id
@@ -108,7 +107,6 @@ def AddEvent(db, streamer, tick):
     event.commissions = commissions
 
     db.add(event)
-    db.commit()
     return 1
 
 def FindAllFromStreamer(db, name, delay=5):

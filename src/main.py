@@ -17,7 +17,10 @@ def checkOnline():
 
     file = "/mnt/volume-nyc3-01/logs/" + str(time.time())
     with open(file, 'w') as outfile:
-        json.dump(adult_content, outfile)
+        try:
+            json.dump(adult_content, outfile)
+        except:
+            print "error in logging file"
     print "analysing"
     customsql.analysefile(file)
     print "done analysing"

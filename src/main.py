@@ -25,11 +25,7 @@ def checkOnline():
     customsql.analysefile(file)
     print "done analysing"
 
-def DO_IT_UBF():
-   online = checkOnline()
-
 if __name__ == "__main__":
     while True:
-        DO_IT_UBF()
+        online = checkOnline()
         time.sleep(30)
-

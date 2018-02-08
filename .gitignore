@@ -1,5 +1,6 @@
 .idea/
 src/logs/
-src/*.png
 src/avatars/
 src/stats/
+*.png
+*.pyc

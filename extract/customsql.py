@@ -1,18 +1,15 @@
-import simplejson as json
-import io
 import models
 from sqlalchemy.orm import scoped_session
+import time
 
-def analysefile(input):
+def analysefile(data):
     Session = scoped_session(models.session_factory)
     db = Session()
-    date = float(input.split("/")[-1])
+    date = str(time.time())
     print "date_ ", date
     tick = models.AddTick(db, date)
-    with io.open(input, "r", encoding="utf-8") as content:
-        data = json.load(content)
-        for streamer in data:
-            models.AddStreamer(db, streamer)
-            models.AddEvent(db, streamer, tick)
-        db.commit()
+    for streamer in data:
+        models.AddStreamer(db, streamer)
+        models.AddEvent(db, streamer, tick)
+    db.commit()
     Session.remove()
